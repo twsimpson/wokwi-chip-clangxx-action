@@ -5,7 +5,7 @@ import subprocess
 wasi_sdk = "/opt/wasi-sdk"
 c_compiler = f"{wasi_sdk}/bin/clang"
 cxx_compiler = f"{wasi_sdk}/bin/clang++"
-common_flags = ["--target=wasm32-unknown-wasi", "--sysroot", wasi_sdk]
+common_flags = ["--target=wasm32-unknown-wasip1", "--sysroot", wasi_sdk]
 compile_flags = ["-Werror", "-O2", "-fno-exceptions"]
 link_flags = ["-nostartfiles", "-Wl,--export-table", "-Wl,--no-entry"]
 dist_path = Path("dist")
