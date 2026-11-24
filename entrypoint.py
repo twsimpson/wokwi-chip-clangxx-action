@@ -3,9 +3,10 @@ from pathlib import Path
 import subprocess
 
 wasi_sdk = "/opt/wasi-sdk"
+wasi_sysroot = f"{wasi_sdk}/share/wasi-sysroot"
 c_compiler = f"{wasi_sdk}/bin/clang"
 cxx_compiler = f"{wasi_sdk}/bin/clang++"
-common_flags = ["--target=wasm32-unknown-wasip1", "--sysroot", wasi_sdk]
+common_flags = ["--target=wasm32-unknown-wasip1", "--sysroot", wasi_sysroot]
 compile_flags = ["-Werror", "-O2", "-fno-exceptions"]
 link_flags = ["-nostartfiles", "-Wl,--export-table", "-Wl,--no-entry"]
 dist_path = Path("dist")
@@ -14,9 +15,11 @@ chip_linker = c_compiler
 def compile_base(compiler, input_file):
     input_path = Path(input_file);
     output_path = Path(dist_path, input_path.with_suffix(".o"))
+    Path(output_path.parent).mkdir(parents=True, exist_ok=True)
     args = [compiler] + common_flags + compile_flags
     args.append("-o")
     args.append(str(output_path))
+    args.append("-c")
     args.append(str(input_path))
     subprocess.run(args, check=True)
     return str(output_path)
@@ -31,7 +34,7 @@ def compile_file(input_file):
 def link_chip(object_files):
     args = [chip_linker] + common_flags + link_flags
     args.append("-o")
-    args.append("chip.wasm")
+    args.append(str(dist_path / "chip.wasm"))
     args += object_files
     subprocess.run(args, check=True)
 
