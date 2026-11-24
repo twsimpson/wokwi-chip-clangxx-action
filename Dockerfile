@@ -1,10 +1,8 @@
-FROM alpine:3.21
+FROM twsimpson/wasi-sdk-sysroot:latest
 
-RUN apk update && \
-    apk add clang llvm lld git make cmake ninja-build curl libc++-dev wasi-sdk
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y install --no-install-recommends python3
 
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.py /entrypoint.py
 
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["python3", "/entrypoint.py"]
